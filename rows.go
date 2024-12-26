@@ -43,12 +43,11 @@ func (r wrappedRows) Next(dest []driver.Value) (err error) {
 			}
 			span.Finish()
 		}()
+		start := time.Now()
+		defer func() {
+			r.Log(r.ctx, OpSQLRowsNext, "err", err, "duration", time.Since(start))
+		}()
 	}
-
-	start := time.Now()
-	defer func() {
-		r.Log(r.ctx, OpSQLRowsNext, "err", err, "duration", time.Since(start))
-	}()
 
 	return r.parent.Next(dest)
 }
